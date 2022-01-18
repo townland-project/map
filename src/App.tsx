@@ -1,25 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import { Map } from './components/map';
+import { ICordination, ITaileStateColor, Positions } from './database/positions';
 
 function App() {
+  const color: ITaileStateColor = {
+    vip: '#0ea5e9',
+    normal: '#475569',
+    sell: '#ef4444',
+    disable: 'transparent',
+    road: '#94a3b8',
+  }
+  const [cord, setCord] = useState<ICordination | null>(null)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Map
+      tiles={Positions}
+      colors={color}
+      width={window.innerWidth}
+      height={window.innerHeight}
+      size={24}
+      backgroundColor="#374151"
+      cordination={cord}
+      onCordinationChange={(value) => setCord(value)}
+      onClick={(value) => setCord(value)}
+    />
   );
 }
 
