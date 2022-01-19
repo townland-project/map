@@ -1,36 +1,21 @@
 import { Stage, Layer, Rect, Text, Image } from 'react-konva'
 import { ICordination, ITaileStateColor, ITileMap, TTileState } from '../database/positions'
 import useImage from 'use-image';
-import { useState } from 'react';
 
 export const Map = (props: Props) => {
-    const [scale, setScale] = useState<number>(1.0)
     const [locationImage] = useImage(`${process.env.PUBLIC_URL}/assets/location.png`)
 
     const OnWheel = (e: any) => {
         e.evt.preventDefault();
 
         const scaleBy = 1.02;
-        const stage = e.target.getStage();
-        const oldScale = stage.scaleX();
-        // const mousePointTo = {
-        //     x: stage.getPointerPosition().x / oldScale - stage.x() / oldScale,
-        //     y: stage.getPointerPosition().y / oldScale - stage.y() / oldScale
-        // };
+        const stage = e.target.getStage()
+        const oldScale = stage.scaleX()
 
         const newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-        setScale(
-            newScale
-        )
-
-        // this.setState({
-        //     stageScale: newScale,
-        //     stageX:
-        //         -(mousePointTo.x - stage.getPointerPosition().x / newScale) * newScale,
-        //     stageY:
-        //         -(mousePointTo.y - stage.getPointerPosition().y / newScale) * newScale
-        // });
+        if (props.minScale <= newScale && newScale <= props.maxScale)
+            props.onScaleChange(newScale)
     }
 
     const Cordination = () => {
@@ -45,6 +30,9 @@ export const Map = (props: Props) => {
                     width={props.size}
                     height={props.size}
                     stroke="#e2e8f0"
+                    onMouseUp={() =>
+                        props.onClick((state === 'disable' || state === 'road') ? null : { x: props.cordination!.x, y: props.cordination!.y })
+                    }
                     strokeWidth={2}
                 />
 
@@ -108,8 +96,10 @@ export const Map = (props: Props) => {
             }}
             width={props.width}
             height={props.height}
-            scaleX={scale}
-            scaleY={scale}
+            scaleX={props.scale}
+            scaleY={props.scale}
+            offsetX={(props.width / 2) * -1}
+            offsetY={(props.height / 2) * -1}
             draggable={true}
             onMouseLeave={() => props.onCordinationChange(null)}
             onWheel={(e) => OnWheel(e)}
@@ -128,16 +118,13 @@ export const Map = (props: Props) => {
                                 width={props.size}
                                 height={props.size}
                                 fill={props.colors[state]}
-                                onClick={() => {
-                                    props.onClick(state === 'disable' ? null : { x, y })
-                                }}
-                                onMouseEnter={() => props.onCordinationChange(state === 'disable' ? null : { x, y })}
+                                onMouseOver={() =>
+                                    props.onCordinationChange((state === 'disable' || state === 'road') ? null : { x, y })
+                                }
                             />
                         )
                     })
                 }
-            </Layer>
-            <Layer>
                 {
                     props.cordination ? <Cordination /> : <></>
                 }
@@ -153,6 +140,10 @@ interface Props {
     height: number
     backgroundColor: string
     size: number
+    minScale: number
+    maxScale: number
+    scale: number
+    onScaleChange: IScaleCallback
     cordination: ICordination | null
     onCordinationChange: ICordinationCallback
     onClick: ICordinationCallback
@@ -160,4 +151,8 @@ interface Props {
 
 interface ICordinationCallback {
     (cord: ICordination | null): void
+}
+
+interface IScaleCallback {
+    (scale: number): void
 }
