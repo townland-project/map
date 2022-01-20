@@ -10,6 +10,7 @@ function App() {
   const [scale, setScale] = useState<number>(1.0)
   const [cord, setCord] = useState<ICordination | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
+  const [show, setShow] = useState(true)
 
   const ZoomIn = () => {
     if (scale <= 2) setScale(scale + 0.02)
@@ -48,18 +49,15 @@ function App() {
   }
 
   return (
-    <main className="flex flex-nowrap w-screen h-screen select-none bg-slate-200">
+    <main className="flex flex-nowrap w-screen h-screen overflow-hidden relative select-none bg-slate-200">
 
       <div
-        style={{
-          'minWidth': window.innerWidth / 1.5
-        }}
-        className="rounded-2xl h-fit overflow-hidden ml-10 relative my-auto mr-2">
+        className="rounded-2xl h-fit w-full overflow-hidden relative my-auto mx-2 lg:mr-2 lg:ml-4">
         <Map
           tiles={Positions}
           colors={Colors}
           width={window.innerWidth / 1.5}
-          height={window.innerHeight - 100}
+          height={window.innerHeight - 20}
           size={24}
           backgroundColor="#cbd5e1"
           minScale={0.5}
@@ -83,10 +81,20 @@ function App() {
           -
         </div>
       </div>
-      <div className="flex flex-col w-full">
-        <Header />
-        <Search />
-        <PageAndItems />
+      <div
+        style={{
+          'height': show ? '100vh' : '128px'
+        }}
+        className="flex flex-col w-full lg:max-w-[400px] absolute -top-5 lg:relative lg:top-0">
+        <Header
+          onClose={() => setShow(!show)}
+        />
+        <div
+          style={{ 'marginRight': show ? '1em' : '-100vw' }}
+          className='z-10 transition-[margin-right] duration-300 bg-white max-w-[300px] ml-auto mr-4 py-2 px-4 rounded-lg shadow lg:ml-0 md:max-w-[400px] lg:bg-transparent lg:px-10 lg:mr-0 lg:shadow-none'>
+          <Search />
+          <PageAndItems />
+        </div>
       </div>
     </main>
   );

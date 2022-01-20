@@ -2,7 +2,7 @@ import { ICordination, ITile } from "../database/positions";
 
 export const Page = (props: Props) => {
     return (
-        <div className="flex flex-col px-12 py-2 h-[80vh]">
+        <div className="flex flex-col py-2 h-[79vh]">
             <div className="flex flex-nowrap items-center">
             </div>
             <div

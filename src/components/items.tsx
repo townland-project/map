@@ -3,7 +3,7 @@ import { Item } from "./item"
 
 export const Items = (props: Props) => {
     return (
-        <div data-simplebar className="flex flex-col mt-3 mx-10 max-h-[80vh]">
+        <div data-simplebar className="flex flex-col mt-3 h-[78vh] max-h-[78vh] overflow-x-hidden relative">
             {
                 Object.keys(Positions)
                     .filter((key) => Positions[key].state === 'sell')
